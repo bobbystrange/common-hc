@@ -1,0 +1,47 @@
+version VERSION
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.jfrog.org/artifactory/oss-snapshot-local' }
+}
+
+ext {
+    gsonVersion = "2.8.5"
+    xstreamVersion = "1.4.11.1"
+    jacksonVersion = "2.9.8"
+
+    okhttpVersion = "3.13.1"
+    retrofitVersion = "2.5.0"
+
+    httpclientVersion = "4.5.7"
+    httpcoreVersion = "4.4.11"
+}
+
+dependencies {
+    // okhttp
+    //compile "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    //compile "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    compile "com.squareup.okhttp3:logging-interceptor:3.12.0"
+    compile "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    compile "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+
+    // httpclient
+    // dependencied by httpmime
+    //compile "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    compile "org.apache.httpcomponents:httpmime:${httpclientVersion}"
+    // dependencied by httpclient
+    //compile "org.apache.httpcomponents:httpcore:${httpcoreVersion}"
+
+    // xml and json
+    compile "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    compile "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
+    // dependencied by retrofit2 converter-gson
+    //compile "com.google.code.gso:gson:${gsonVersion}"
+    compile "com.thoughtworks.xstream:xstream:${xstreamVersion}"
+
+    // project
+    compile('com.tukeof.common:common-core:0.2.0-SNAPSHOT')
+}
+
+apply from: "../publish-jcenter.gradle"
