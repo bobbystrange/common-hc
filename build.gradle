@@ -1,5 +1,5 @@
 ext {
-    gsonVersion = "2.8.5"
+//    gsonVersion = "2.8.5"
     xstreamVersion = "1.4.11.1"
     jacksonVersion = "2.9.8"
 
@@ -12,22 +12,22 @@ ext {
 
 dependencies {
     // okhttp
-    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
-    implementation "com.squareup.okhttp3:logging-interceptor:3.12.0"
-    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    api "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    api "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    api "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
 
     // httpclient
-    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
-    implementation "org.apache.httpcomponents:httpmime:${httpclientVersion}"
+    api "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    api "org.apache.httpcomponents:httpmime:${httpclientVersion}"
 
     // xml and json
-    implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-    implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
+    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     //implementation "com.google.code.gso:gson:${gsonVersion}"
-    implementation "com.thoughtworks.xstream:xstream:${xstreamVersion}"
+    api "com.thoughtworks.xstream:xstream:${xstreamVersion}"
 
     // project
-    implementation 'com.tukeof.common:common-core:0.2.0'
+    // { changing = true } is redundant if endswith -SNAPSHOT
+    implementation ('org.dreamcat:common-core:0.0.1') { changing = true }
 }
