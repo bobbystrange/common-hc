@@ -33,7 +33,7 @@ public class CDataStaxDriver extends StaxDriver {
 
             private Class targetClass;
 
-            public void startNode(String name, @SuppressWarnings("rawtypes") Class clazz) {
+            public void startNode(String name, Class clazz) {
                 super.startNode(name);
 
                 if ("xml".equals(name)) {

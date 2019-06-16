@@ -3,6 +3,7 @@ package org.dreamcat.common.hc.okhttp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
+import org.dreamcat.common.annotation.Nullable;
 import org.dreamcat.common.hc.gson.GsonUtil;
 import org.dreamcat.common.hc.xstream.XStreamUtil;
 import org.dreamcat.common.hc.xstream.XStreamXmlConverterFactory;
@@ -29,65 +30,69 @@ public class RetrofitUtil {
             GsonConverterFactory.create(gson);
     private static XStreamXmlConverterFactory xstreamFactory;
 
-    private static Converter.Factory buildGsonFactory() {
-        return gsonFactory;
+    static {
+        XStream xStream = XStreamUtil.newXStream();
+        xstreamFactory = XStreamXmlConverterFactory.create(xStream);
     }
 
-    private static Converter.Factory buildXStreamFactory() {
-        if (xstreamFactory == null) {
-            XStream xStream = XStreamUtil.newXStream();
-            xstreamFactory = XStreamXmlConverterFactory.create(xStream);
-        }
-        return xstreamFactory;
-    }
-
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static <T> T createService(Retrofit retrofit, Class<T> clazz) {
         return retrofit.create(clazz);
     }
 
-    public static <T> T info(Call<T> call) throws IOException {
-        Response<T> response = null;
-        response = call.execute();
-        if (response.isSuccessful()) {
-            T responseBody = response.body();
-            String responseContent = null;
-            if (responseBody instanceof ResponseBody) {
-                responseContent = ((ResponseBody) responseBody).string();
+    /**
+     * unwrap retrofit2.Call
+     * @param call Retrofit Call
+     * @param <T> wrapped body
+     * @return unwrapped body, such as json/xml bean
+     * @throws RuntimeException IO error, or response code is not 2xx
+     */
+    @Nullable
+    public static <T> T unwrap(Call<T> call) {
+        try {
+            Response<T> response = call.execute();
+            if (response.isSuccessful()) {
+                T responseBody = response.body();
+                String responseContent;
+                if (responseBody == null){
+                    responseContent = "null";
+                } else if (responseBody instanceof ResponseBody) {
+                    responseContent = ((ResponseBody) responseBody).string();
+                } else {
+                    responseContent = GsonUtil.toJson(responseBody);
+                }
+                log.info("<-- success:\t{}", responseContent);
+                return responseBody;
             } else {
-                responseContent = GsonUtil.toJson(responseBody);
+                log.info("<-- fail:\tcode={}, message={}", response.code(), response.message());
+                String errorString = response.errorBody() == null ? "null" : response.errorBody().string();
+                throw new RuntimeException(errorString);
             }
-            log.info("---------------- success:\t{}", responseContent);
-            return responseBody;
-        } else {
-            log.info("---------------- http status code:\t{}", response.code());
-            log.info("---------------- http response message:\t{}", response.message());
-            String errorStrig = response.errorBody() == null ? "null" : response.errorBody().string();
-            log.info("---------------- http error body:\t{}", errorStrig);
-            throw new IOException("---------------- request error");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static Retrofit getInstance4Json(String baseUrl) {
-        return getInstance(baseUrl, buildGsonFactory());
+        return getInstance(baseUrl, gsonFactory);
     }
 
     public static Retrofit getInstance4Json(String baseUrl, Map<String, String> headers) {
-        return getInstance(baseUrl, buildGsonFactory(), headers);
+        return getInstance(baseUrl, gsonFactory, headers);
     }
 
     public static Retrofit getInstance4Xml(String baseUrl) {
-        return getInstance(baseUrl, buildXStreamFactory());
+        return getInstance(baseUrl, xstreamFactory);
     }
 
     public static Retrofit getInstance4Xml(String baseUrl, Map<String, String> headers) {
-        return getInstance(baseUrl, buildXStreamFactory(), headers);
+        return getInstance(baseUrl, xstreamFactory, headers);
     }
 
-    // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
     public static Retrofit getInstance(String baseUrl, Converter.Factory factory) {
         return getInstance(baseUrl, factory, null, null);
