@@ -18,7 +18,6 @@ final class XStreamXmlResponseBodyConverter<T> implements Converter<ResponseBody
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public T convert(ResponseBody value) throws IOException {
         try {
             this.xStream.processAnnotations(cls);

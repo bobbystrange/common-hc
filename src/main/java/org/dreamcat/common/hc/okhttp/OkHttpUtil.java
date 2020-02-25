@@ -1,10 +1,5 @@
 package org.dreamcat.common.hc.okhttp;
 
-import org.dreamcat.common.annotation.NotNull;
-import org.dreamcat.common.annotation.Nullable;
-import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.SSLUtil;
-import org.dreamcat.common.util.URLUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Callback;
 import okhttp3.Cookie;
@@ -20,6 +15,11 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
+import org.dreamcat.common.annotation.NotNull;
+import org.dreamcat.common.annotation.Nullable;
+import org.dreamcat.common.net.SocketUtil;
+import org.dreamcat.common.util.ObjectUtil;
+import org.dreamcat.common.util.UrlUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -41,7 +41,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         Request.Builder builder = new Request.Builder()
                 .get()
@@ -64,7 +64,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> queryMap,
             Callback callback) {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         Request.Builder builder = new Request.Builder()
                 .url(url);
@@ -116,7 +116,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         Request.Builder builder = new Request.Builder()
                 .url(url)
@@ -140,7 +140,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> queryMap,
             Callback callback) {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         Request.Builder builder = new Request.Builder()
                 .url(url)
@@ -162,7 +162,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
 
         if ("GET".equalsIgnoreCase(method)){
@@ -187,7 +187,7 @@ public class OkHttpUtil {
             @Nullable Map<String, String> queryMap,
             Callback callback) {
         if (queryMap != null && !queryMap.isEmpty()) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         Request.Builder builder = new Request.Builder()
                 .url(url)
@@ -314,11 +314,11 @@ public class OkHttpUtil {
         OkHttpClient.Builder builder = newBuilder(timeout, headers, interceptors);
         if (keyStoreType == null)
             builder.sslSocketFactory(
-                    SSLUtil.sslSocketFactoryForBKS(certPath, certPassword),
-                    SSLUtil.x509TrustManager());
+                    SocketUtil.sslSocketFactoryForBKS(certPath, certPassword),
+                    SocketUtil.x509TrustManager());
         else builder.sslSocketFactory(
-                SSLUtil.sslSocketFactory(certPath, certPassword, keyStoreType),
-                SSLUtil.x509TrustManager());
+                SocketUtil.sslSocketFactory(certPath, certPassword, keyStoreType),
+                SocketUtil.x509TrustManager());
         return builder.build();
     }
 

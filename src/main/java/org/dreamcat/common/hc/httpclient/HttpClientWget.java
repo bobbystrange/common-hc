@@ -55,44 +55,44 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     }
 
     @Override
-    public void save(CloseableHttpResponse resp, String path) throws IOException {
-        throwIfNotSuccessful(resp);
+    public void save(CloseableHttpResponse res, String path) throws IOException {
+        throwIfNotSuccessful(res);
 
         File file = new File(path);
         try (FileOutputStream output = new FileOutputStream(file)) {
-            HttpEntity entity = resp.getEntity();
+            HttpEntity entity = res.getEntity();
             entity.writeTo(output);
         }
     }
 
     @Override
-    public String string(CloseableHttpResponse resp) throws IOException {
-        throwIfNotSuccessful(resp);
+    public String string(CloseableHttpResponse res) throws IOException {
+        throwIfNotSuccessful(res);
 
-        HttpEntity entity = resp.getEntity();
+        HttpEntity entity = res.getEntity();
         return EntityUtils.toString(entity, StandardCharsets.UTF_8);
     }
 
     @Override
-    public byte[] bytes(CloseableHttpResponse resp) throws IOException {
-        throwIfNotSuccessful(resp);
+    public byte[] bytes(CloseableHttpResponse res) throws IOException {
+        throwIfNotSuccessful(res);
 
-        HttpEntity entity = resp.getEntity();
+        HttpEntity entity = res.getEntity();
         return EntityUtils.toByteArray(entity);
     }
 
     @Override
-    public InputStream inputStream(CloseableHttpResponse resp) throws IOException {
-        throwIfNotSuccessful(resp);
+    public InputStream inputStream(CloseableHttpResponse res) throws IOException {
+        throwIfNotSuccessful(res);
 
-        HttpEntity entity = resp.getEntity();
+        HttpEntity entity = res.getEntity();
         return entity.getContent();
     }
 
     @Override
-    public Reader reader(CloseableHttpResponse resp) throws IOException {
-        throwIfNotSuccessful(resp);
-        HttpEntity entity = resp.getEntity();
+    public Reader reader(CloseableHttpResponse res) throws IOException {
+        throwIfNotSuccessful(res);
+        HttpEntity entity = res.getEntity();
         return new InputStreamReader(entity.getContent(), getCharset(entity));
     }
 
@@ -113,8 +113,8 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
         return charset;
     }
 
-    private void throwIfNotSuccessful(CloseableHttpResponse resp) throws IOException {
-        int code = resp.getStatusLine().getStatusCode();
+    private void throwIfNotSuccessful(CloseableHttpResponse res) throws IOException {
+        int code = res.getStatusLine().getStatusCode();
         boolean successful = code >= 200 && code < 300;
         if (!successful) {
             throw new IOException("status code is not in [200, 300)");
@@ -126,16 +126,16 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     public void requestAsync(HttpUriRequest req, Callback<HttpUriRequest, CloseableHttpResponse> callback) {
         executorService.submit(() -> {
             try {
-                CloseableHttpResponse resp = client.execute(req);
-                callback.onComplete(req, resp);
+                CloseableHttpResponse res = client.execute(req);
+                callback.onComplete(req, res);
             } catch (IOException e) {
                 callback.onError(req, e);
             }
         });
     }
 
-    interface Callback<Req, Resp> {
-        void onComplete(Req req, Resp resp);
+    interface Callback<Req, Res> {
+        void onComplete(Req req, Res res);
 
         void onError(Req req, Exception e);
     }

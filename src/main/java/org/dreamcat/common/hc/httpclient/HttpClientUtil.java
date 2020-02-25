@@ -3,7 +3,7 @@ package org.dreamcat.common.hc.httpclient;
 import org.dreamcat.common.annotation.NotNull;
 import org.dreamcat.common.annotation.Nullable;
 import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.URLUtil;
+import org.dreamcat.common.util.UrlUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -57,7 +57,7 @@ public class HttpClientUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         return request(url, null, headers, queryMap, HttpGet::new);
     }
@@ -85,7 +85,7 @@ public class HttpClientUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         return request(url, null, headers, queryMap, HttpDelete::new);
     }
@@ -95,7 +95,7 @@ public class HttpClientUtil {
             @Nullable Map<String, String> headers,
             @Nullable Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
         return request(url, null, headers, queryMap, HttpHead::new);
     }
@@ -134,7 +134,7 @@ public class HttpClientUtil {
             @Nullable Map<String, String> queryMap,
             Function<String, HttpUriRequest> constructor) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = URLUtil.concatUrl(url, queryMap);
+            url = UrlUtil.concatUrl(url, queryMap);
         }
 
         HttpUriRequest req = constructor.apply(url);

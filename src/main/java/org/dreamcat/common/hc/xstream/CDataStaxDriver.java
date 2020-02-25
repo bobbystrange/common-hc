@@ -19,6 +19,7 @@ public class CDataStaxDriver extends StaxDriver {
         super(new QNameMap(), new NoNameCoder());
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StaxWriter createStaxWriter(XMLStreamWriter out,
                                        boolean writeStartEndDocument) throws XMLStreamException {
