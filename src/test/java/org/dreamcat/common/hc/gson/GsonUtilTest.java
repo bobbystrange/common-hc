@@ -1,8 +1,8 @@
 package org.dreamcat.common.hc.gson;
 
-import org.dreamcat.common.hc.test.BeanBase;
-import org.dreamcat.common.util.bean.BeanStringUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.dreamcat.common.bean.BeanUtil;
+import org.dreamcat.common.hc.test.BeanBase;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,17 +14,17 @@ import java.util.Map;
 @Slf4j
 public class GsonUtilTest {
 
+    String json;
     private BeanBase obj = BeanBase.newInstance();
 
-    String json;
     @Test
-    public void toXml(){
+    public void toXml() {
         json = GsonUtil.toJson(obj);
         log.info("json:\n{}", json);
 
         BeanBase newObj = GsonUtil.fromJson(json, BeanBase.class);
         assert newObj != null;
-        log.info("bean:\n{}", BeanStringUtil.toPrettyString(newObj));
+        log.info("bean:\n{}", BeanUtil.toPrettyString(newObj));
 
     }
 
@@ -32,30 +32,30 @@ public class GsonUtilTest {
     public void toList() {
         json = "['FleetWood', 'MAC']";
         log.info("json:\n{}", json);
-        List<String> list =  GsonUtil.toList(json);
-        log.info("list:\n{}\n", BeanStringUtil.toPrettyString(list));
+        List<String> list = GsonUtil.toList(json);
+        log.info("list:\n{}\n", BeanUtil.toPrettyString(list));
 
         json = "[1, '', true, [], {}]";
-        List<Object> list2 =  GsonUtil.toList(json);
-        log.info("list2:\n{}", BeanStringUtil.toPrettyString(list2));
+        List<Object> list2 = GsonUtil.toList(json);
+        log.info("list2:\n{}", BeanUtil.toPrettyString(list2));
     }
 
     @Test
     public void toMap() {
         json = "{\"john\": \"lennon\", \"bob\": \"dylan\"}";
         log.info("json:\n{}", json);
-        Map<String, Object> map =  GsonUtil.toMap(json);
-        log.info("map:\n{}\n", BeanStringUtil.toPrettyString(map));
+        Map<String, Object> map = GsonUtil.toMap(json);
+        log.info("map:\n{}\n", BeanUtil.toPrettyString(map));
 
         json = "{\"john\": \"lennon\", \"bob\": [\"dylan\"]}";
         log.info("json:\n{}", json);
-        Map<String, Object> map2 =  GsonUtil.toMap(json);
-        log.info("map2:\n{}\n", BeanStringUtil.toPrettyString(map2));
+        Map<String, Object> map2 = GsonUtil.toMap(json);
+        log.info("map2:\n{}\n", BeanUtil.toPrettyString(map2));
 
         json = GsonUtil.toJson(obj);
         log.info("json:\n{}", json);
-        Map<String, Object> map3 =  GsonUtil.toMap(json);
-        log.info("map:\n{}\n", BeanStringUtil.toPrettyString(map3));
+        Map<String, Object> map3 = GsonUtil.toMap(json);
+        log.info("map:\n{}\n", BeanUtil.toPrettyString(map3));
 
     }
 

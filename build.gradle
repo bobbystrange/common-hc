@@ -1,7 +1,6 @@
 ext {
 //    gsonVersion = "2.8.5"
     xstreamVersion = "1.4.11.1"
-    jacksonVersion = "2.9.8"
 
     okhttpVersion = "3.13.1"
     retrofitVersion = "2.5.0"
@@ -21,15 +20,11 @@ dependencies {
     api "org.apache.httpcomponents:httpclient:${httpclientVersion}"
     api "org.apache.httpcomponents:httpmime:${httpclientVersion}"
 
-    // xml and json
-    api "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
-    api "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
     //implementation "com.google.code.gso:gson:${gsonVersion}"
     api "com.thoughtworks.xstream:xstream:${xstreamVersion}"
 
-    // project
     // { changing = true } is redundant if endswith -SNAPSHOT
-    implementation ('org.dreamcat:common-core:0.0.1') { changing = true }
+    implementation('org.dreamcat:common-core:0.0.1') { changing = true }
 
     testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
     testImplementation "junit:junit:$junitVersion"

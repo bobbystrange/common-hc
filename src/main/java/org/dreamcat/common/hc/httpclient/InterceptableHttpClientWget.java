@@ -1,12 +1,12 @@
 package org.dreamcat.common.hc.httpclient;
 
-import org.dreamcat.common.core.chain.InterceptTarget;
-import org.dreamcat.common.core.chain.Interceptor;
-import org.dreamcat.common.core.chain.RealInterceptTarget;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.dreamcat.common.core.chain.InterceptTarget;
+import org.dreamcat.common.core.chain.Interceptor;
+import org.dreamcat.common.core.chain.RealInterceptTarget;
 
 import java.util.List;
 

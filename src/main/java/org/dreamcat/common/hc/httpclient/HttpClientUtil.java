@@ -1,9 +1,5 @@
 package org.dreamcat.common.hc.httpclient;
 
-import org.dreamcat.common.annotation.NotNull;
-import org.dreamcat.common.annotation.Nullable;
-import org.dreamcat.common.util.ObjectUtil;
-import org.dreamcat.common.util.UrlUtil;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpRequestInterceptor;
@@ -29,6 +25,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.dreamcat.common.util.ObjectUtil;
+import org.dreamcat.common.util.UrlUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +52,8 @@ public class HttpClientUtil {
 
     public static CloseableHttpResponse get(
             String url,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
         }
@@ -65,8 +63,8 @@ public class HttpClientUtil {
     public static CloseableHttpResponse post(
             String url,
             HttpEntity entity,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         return request(url, entity, headers, queryMap, HttpPost::new);
     }
 
@@ -75,15 +73,15 @@ public class HttpClientUtil {
     public static CloseableHttpResponse put(
             String url,
             HttpEntity entity,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         return request(url, entity, headers, queryMap, HttpPut::new);
     }
 
     public static CloseableHttpResponse delete(
             String url,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
         }
@@ -92,8 +90,8 @@ public class HttpClientUtil {
 
     public static CloseableHttpResponse head(
             String url,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
         }
@@ -103,9 +101,9 @@ public class HttpClientUtil {
     public static CloseableHttpResponse request(
             String url,
             String method,
-            @Nullable HttpEntity entity,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap) throws IOException {
+            HttpEntity entity,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
         Function<String, HttpUriRequest> constructor;
         method = method.toUpperCase();
         switch (method) {
@@ -129,9 +127,9 @@ public class HttpClientUtil {
 
     public static CloseableHttpResponse request(
             String url,
-            @Nullable HttpEntity entity,
-            @Nullable Map<String, String> headers,
-            @Nullable Map<String, String> queryMap,
+            HttpEntity entity,
+            Map<String, String> headers,
+            Map<String, String> queryMap,
             Function<String, HttpUriRequest> constructor) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
@@ -212,27 +210,27 @@ public class HttpClientUtil {
     }
 
     public static CloseableHttpClient newClient(
-            @Nullable String userAgent,
-            @Nullable String basicUsername, @Nullable String basicPassword) {
+            String userAgent,
+            String basicUsername, String basicPassword) {
         return newClient(null, null, userAgent, basicUsername, basicPassword,
                 null, null);
     }
 
     public static CloseableHttpClient newClient(
-            @Nullable String userAgent,
-            @Nullable List<HttpRequestInterceptor> requestInterceptors,
-            @Nullable List<HttpResponseInterceptor> responseInterceptors) {
+            String userAgent,
+            List<HttpRequestInterceptor> requestInterceptors,
+            List<HttpResponseInterceptor> responseInterceptors) {
         return newClient(null, null, userAgent, null, null,
                 requestInterceptors, responseInterceptors);
     }
 
     public static CloseableHttpClient newClient(
-            @Nullable ConnectionConfig connectionConfig,
-            @Nullable SocketConfig socketConfig,
-            @Nullable String userAgent,
-            @Nullable String basicUsername, @Nullable String basicPassword,
-            @Nullable List<HttpRequestInterceptor> requestInterceptors,
-            @Nullable List<HttpResponseInterceptor> responseInterceptors) {
+            ConnectionConfig connectionConfig,
+            SocketConfig socketConfig,
+            String userAgent,
+            String basicUsername, String basicPassword,
+            List<HttpRequestInterceptor> requestInterceptors,
+            List<HttpResponseInterceptor> responseInterceptors) {
         HttpClientBuilder builder = HttpClientBuilder.create();
 
         if (ObjectUtil.isNotEmpty(requestInterceptors)) {
@@ -267,7 +265,7 @@ public class HttpClientUtil {
         return builder.build();
     }
 
-    public static String toString(@NotNull CloseableHttpResponse response) throws IOException {
+    public static String toString(CloseableHttpResponse response) throws IOException {
         HttpEntity entity = response.getEntity();
         if (entity == null) return null;
         //         ContentType contentType = ContentType.getOrDefault(entity);

@@ -1,13 +1,13 @@
 package org.dreamcat.common.hc.okhttp;
 
-import org.dreamcat.common.core.Wget;
-import org.dreamcat.common.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import org.dreamcat.common.core.Wget;
+import org.dreamcat.common.util.ObjectUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,14 +106,14 @@ public class OkHttpWget implements Wget<Request, Response> {
             headers.forEach(builder::addHeader);
         }
 
-        switch (method){
+        switch (method) {
             case "GET":
                 return builder.get().build();
             case "HEAD":
                 return builder.head().build();
         }
 
-        switch (method){
+        switch (method) {
             case "POST":
                 return builder.post(body).build();
             case "PUT":

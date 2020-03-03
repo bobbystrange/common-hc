@@ -22,6 +22,8 @@ import java.util.Map;
  */
 public class GsonUtil {
 
+    private static final Gson gson = newGson();
+
     /**
      * object serializable
      *
@@ -48,6 +50,8 @@ public class GsonUtil {
         return gson.fromJson(json, clazz);
     }
 
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
     public static Gson newGson() {
         GsonBuilder gb = new GsonBuilder();
         gb.registerTypeAdapter(Date.class, new DateJsonSerializer());
@@ -56,22 +60,20 @@ public class GsonUtil {
         return gb.create();
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
     public static JsonElement toJsonElement(String json) {
         return gson.fromJson(json, JsonElement.class);
     }
 
-    public static Integer getInt(String json, String memberName){
+    public static Integer getInt(String json, String memberName) {
         return getInt(toJsonElement(json), memberName);
     }
 
-    public static Integer getInt(JsonElement jsonElement, String memberName){
-        if (jsonElement.isJsonObject()){
+    public static Integer getInt(JsonElement jsonElement, String memberName) {
+        if (jsonElement.isJsonObject()) {
             JsonElement memberElement = jsonElement.getAsJsonObject().get(memberName);
-            if (memberElement != null && memberElement.isJsonPrimitive()){
+            if (memberElement != null && memberElement.isJsonPrimitive()) {
                 JsonPrimitive memberPrimitive = memberElement.getAsJsonPrimitive();
-                if (memberPrimitive.isNumber()){
+                if (memberPrimitive.isNumber()) {
                     return memberPrimitive.getAsInt();
                 }
             }
@@ -79,16 +81,16 @@ public class GsonUtil {
         return null;
     }
 
-    public static Long getLong(String json, String memberName){
+    public static Long getLong(String json, String memberName) {
         return getLong(toJsonElement(json), memberName);
     }
 
-    public static Long getLong(JsonElement jsonElement, String memberName){
-        if (jsonElement.isJsonObject()){
+    public static Long getLong(JsonElement jsonElement, String memberName) {
+        if (jsonElement.isJsonObject()) {
             JsonElement memberElement = jsonElement.getAsJsonObject().get(memberName);
-            if (memberElement != null && memberElement.isJsonPrimitive()){
+            if (memberElement != null && memberElement.isJsonPrimitive()) {
                 JsonPrimitive memberPrimitive = memberElement.getAsJsonPrimitive();
-                if (memberPrimitive.isNumber()){
+                if (memberPrimitive.isNumber()) {
                     return memberPrimitive.getAsLong();
                 }
             }
@@ -96,16 +98,16 @@ public class GsonUtil {
         return null;
     }
 
-    public static Double getDouble(String json, String memberName){
+    public static Double getDouble(String json, String memberName) {
         return getDouble(toJsonElement(json), memberName);
     }
 
-    public static Double getDouble(JsonElement jsonElement, String memberName){
-        if (jsonElement.isJsonObject()){
+    public static Double getDouble(JsonElement jsonElement, String memberName) {
+        if (jsonElement.isJsonObject()) {
             JsonElement memberElement = jsonElement.getAsJsonObject().get(memberName);
-            if (memberElement != null && memberElement.isJsonPrimitive()){
+            if (memberElement != null && memberElement.isJsonPrimitive()) {
                 JsonPrimitive memberPrimitive = memberElement.getAsJsonPrimitive();
-                if (memberPrimitive.isNumber()){
+                if (memberPrimitive.isNumber()) {
                     return memberPrimitive.getAsDouble();
                 }
             }
@@ -113,16 +115,16 @@ public class GsonUtil {
         return null;
     }
 
-    public static Boolean getBoolean(String json, String memberName){
+    public static Boolean getBoolean(String json, String memberName) {
         return getBoolean(toJsonElement(json), memberName);
     }
 
-    public static Boolean getBoolean(JsonElement jsonElement, String memberName){
-        if (jsonElement.isJsonObject()){
+    public static Boolean getBoolean(JsonElement jsonElement, String memberName) {
+        if (jsonElement.isJsonObject()) {
             JsonElement memberElement = jsonElement.getAsJsonObject().get(memberName);
-            if (memberElement != null && memberElement.isJsonPrimitive()){
+            if (memberElement != null && memberElement.isJsonPrimitive()) {
                 JsonPrimitive memberPrimitive = memberElement.getAsJsonPrimitive();
-                if (memberPrimitive.isBoolean()){
+                if (memberPrimitive.isBoolean()) {
                     return memberPrimitive.getAsBoolean();
                 }
             }
@@ -130,26 +132,24 @@ public class GsonUtil {
         return null;
     }
 
-    public static String getString(String json, String memberName){
+    public static String getString(String json, String memberName) {
         return getString(toJsonElement(json), memberName);
     }
 
-    public static String getString(JsonElement jsonElement, String memberName){
-        if (jsonElement.isJsonObject()){
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    public static String getString(JsonElement jsonElement, String memberName) {
+        if (jsonElement.isJsonObject()) {
             JsonElement memberElement = jsonElement.getAsJsonObject().get(memberName);
-            if (memberElement != null && memberElement.isJsonPrimitive()){
+            if (memberElement != null && memberElement.isJsonPrimitive()) {
                 JsonPrimitive memberPrimitive = memberElement.getAsJsonPrimitive();
-                if (memberPrimitive.isString()){
+                if (memberPrimitive.isString()) {
                     return memberPrimitive.getAsString();
                 }
             }
         }
         return null;
     }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    private static final Gson gson = newGson();
 
     private static Object toObject(JsonElement element) {
         if (element.isJsonObject()) {
@@ -160,13 +160,13 @@ public class GsonUtil {
         }
         if (element.isJsonPrimitive()) {
             JsonPrimitive jsonPrimitive = element.getAsJsonPrimitive();
-            if (jsonPrimitive.isBoolean()){
+            if (jsonPrimitive.isBoolean()) {
                 return jsonPrimitive.getAsBoolean();
             }
-            if (jsonPrimitive.isNumber()){
+            if (jsonPrimitive.isNumber()) {
                 return jsonPrimitive.getAsDouble();
             }
-            if (jsonPrimitive.isString()){
+            if (jsonPrimitive.isString()) {
                 return jsonPrimitive.getAsString();
             }
         }

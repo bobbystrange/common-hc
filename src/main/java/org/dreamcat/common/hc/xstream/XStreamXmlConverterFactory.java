@@ -20,6 +20,7 @@ public class XStreamXmlConverterFactory extends Converter.Factory {
 
     /**
      * Create an instance using a default {@link com.thoughtworks.xstream.XStream} instance for conversion.
+     *
      * @return Converter.Factory
      */
     public static XStreamXmlConverterFactory create() {
@@ -28,6 +29,7 @@ public class XStreamXmlConverterFactory extends Converter.Factory {
 
     /**
      * Create an instance using {@code xStream} for conversion.
+     *
      * @param xStream custom {@link com.thoughtworks.xstream.XStream} instance for conversion.
      * @return Converter.Factory
      */

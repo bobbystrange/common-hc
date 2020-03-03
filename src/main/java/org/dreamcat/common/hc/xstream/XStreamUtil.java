@@ -6,10 +6,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class XStreamUtil {
 
+    private static final XStream xmlStream = newXStream();
+
     public static String toXML(Object object) {
         xmlStream.processAnnotations(object.getClass());
         return xmlStream.toXML(object);
     }
+
+    // require org.codehaus.jettison in classpath
+//    public static String toJson(Object object) {
+//        XStream xmlStream = new XStream(new JettisonMappedXmlDriver());
+//        return xmlStream.toXML(object);
+//    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static <T> T fromXML(String xml, Class<T> clazz) {
         xmlStream.processAnnotations(clazz);
@@ -23,16 +33,6 @@ public class XStreamUtil {
             return null;
         }
     }
-
-    // require org.codehaus.jettison in classpath
-//    public static String toJson(Object object) {
-//        XStream xmlStream = new XStream(new JettisonMappedXmlDriver());
-//        return xmlStream.toXML(object);
-//    }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    private static final XStream xmlStream = newXStream();
 
     public static XStream newXStream() {
         XStream xmlStream = new XStream(new CDataStaxDriver());

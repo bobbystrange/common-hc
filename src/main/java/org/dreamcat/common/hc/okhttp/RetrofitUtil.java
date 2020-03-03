@@ -3,12 +3,11 @@ package org.dreamcat.common.hc.okhttp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
-import org.dreamcat.common.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
+import okhttp3.ResponseBody;
 import org.dreamcat.common.hc.gson.GsonUtil;
 import org.dreamcat.common.hc.xstream.XStreamUtil;
 import org.dreamcat.common.hc.xstream.XStreamXmlConverterFactory;
-import lombok.extern.slf4j.Slf4j;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.CallAdapter;
 import retrofit2.Converter;
@@ -43,19 +42,19 @@ public class RetrofitUtil {
 
     /**
      * unwrap retrofit2.Call
+     *
      * @param call Retrofit Call
-     * @param <T> wrapped body
+     * @param <T>  wrapped body
      * @return unwrapped body, such as json/xml bean
      * @throws RuntimeException IO error, or response code is not 2xx
      */
-    @Nullable
     public static <T> T unwrap(Call<T> call) {
         try {
             Response<T> response = call.execute();
             if (response.isSuccessful()) {
                 T responseBody = response.body();
                 String responseContent;
-                if (responseBody == null){
+                if (responseBody == null) {
                     responseContent = "null";
                 } else if (responseBody instanceof ResponseBody) {
                     responseContent = ((ResponseBody) responseBody).string();
