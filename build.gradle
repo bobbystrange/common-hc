@@ -2,8 +2,8 @@ ext {
 //    gsonVersion = "2.8.5"
     xstreamVersion = "1.4.11.1"
 
-    okhttpVersion = "3.13.1"
-    retrofitVersion = "2.5.0"
+    okhttpVersion = "4.5.0"
+    retrofitVersion = "2.8.1"
 
     httpclientVersion = "4.5.7"
     httpcoreVersion = "4.4.11"
@@ -11,17 +11,17 @@ ext {
 
 dependencies {
     // okhttp
-    api "com.squareup.okhttp3:okhttp:${okhttpVersion}"
-    api "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
-    api "com.squareup.retrofit2:retrofit:${retrofitVersion}"
-    api "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
+    implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
+    implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
+    implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
+    implementation "com.squareup.retrofit2:converter-gson:${retrofitVersion}"
 
     // httpclient
-    api "org.apache.httpcomponents:httpclient:${httpclientVersion}"
-    api "org.apache.httpcomponents:httpmime:${httpclientVersion}"
+    implementation "org.apache.httpcomponents:httpclient:${httpclientVersion}"
+    implementation "org.apache.httpcomponents:httpmime:${httpclientVersion}"
 
     //implementation "com.google.code.gso:gson:${gsonVersion}"
-    api "com.thoughtworks.xstream:xstream:${xstreamVersion}"
+    implementation "com.thoughtworks.xstream:xstream:${xstreamVersion}"
 
     // { changing = true } is redundant if endswith -SNAPSHOT
     implementation('org.dreamcat:common-core:0.0.1') { changing = true }

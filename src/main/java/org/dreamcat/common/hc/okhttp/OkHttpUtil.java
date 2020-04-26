@@ -22,6 +22,7 @@ import org.dreamcat.common.util.UrlUtil;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
@@ -41,11 +42,18 @@ public class OkHttpUtil {
     private static final HttpLoggingInterceptor httpLoggingInterceptor
             = newHttpLoggingInterceptor();
     private static final OkHttpClient client = newClient();
+    private static final int BUFFER_SIZE = 4096;
 
-    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static Response get(String url) throws IOException {
         return get(url, null, null);
+    }
+
+    public static Response get(
+            String url,
+            Map<String, String> headers) throws IOException {
+        return get(url, headers, null);
     }
 
     public static Response get(
@@ -67,7 +75,14 @@ public class OkHttpUtil {
     }
 
     public static void getAsync(String url, Callback callback) {
-        getAsync(url, null, null, callback);
+        getAsync(url, null, callback);
+    }
+
+    public static void getAsync(
+            String url,
+            Map<String, String> headers,
+            Callback callback) {
+        getAsync(url, headers, null, callback);
     }
 
     public static void getAsync(
@@ -92,10 +107,36 @@ public class OkHttpUtil {
 
     public static Response postJSON(
             String url,
+            String jsonData) throws IOException {
+        return postJSON(url, jsonData, null);
+    }
+
+    public static Response postJSON(
+            String url,
+            String jsonData,
+            Map<String, String> headers) throws IOException {
+        return postJSON(url, jsonData, headers, null);
+    }
+
+    public static Response postJSON(
+            String url,
             String jsonData,
             Map<String, String> headers,
             Map<String, String> queryMap) throws IOException {
         return post(url, newStringBody(jsonData, APPLICATION_JSON_UTF_8), headers, queryMap);
+    }
+
+    public static Response postXML(
+            String url,
+            String xmlData) throws IOException {
+        return postXML(url, xmlData, null);
+    }
+
+    public static Response postXML(
+            String url,
+            String xmlData,
+            Map<String, String> headers) throws IOException {
+        return postXML(url, xmlData, headers, null);
     }
 
     public static Response postXML(
@@ -108,10 +149,44 @@ public class OkHttpUtil {
 
     public static Response postForm(
             String url,
-            Map<String, String> form,
+            Map<String, String> formData) throws IOException {
+        return postForm(url, formData, null);
+    }
+
+    public static Response postForm(
+            String url,
+            Map<String, String> formData,
+            Map<String, String> headers) throws IOException {
+        return postForm(url, formData, headers, null);
+    }
+
+    public static Response postForm(
+            String url,
+            Map<String, String> formData,
             Map<String, String> headers,
             Map<String, String> queryMap) throws IOException {
-        return post(url, newFormBody(form), headers, queryMap);
+        return post(url, newFormBody(formData), headers, queryMap);
+    }
+
+    public static Response postMultipartForm(
+            String url,
+            Map<String, Object> formData) throws IOException {
+        return postMultipartForm(url, formData, null);
+    }
+
+    public static Response postMultipartForm(
+            String url,
+            Map<String, Object> formData,
+            Map<String, String> headers) throws IOException {
+        return postMultipartForm(url, formData, headers, null);
+    }
+
+    public static Response postMultipartForm(
+            String url,
+            Map<String, Object> formData,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
+        return post(url, newMultipartBody(formData), headers, queryMap);
     }
 
     public static Response post(
@@ -119,8 +194,6 @@ public class OkHttpUtil {
             RequestBody body) throws IOException {
         return post(url, body, null, null);
     }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static Response post(
             String url,
@@ -210,7 +283,6 @@ public class OkHttpUtil {
         requestAsync(builder.build(), callback);
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static Response request(Request req) throws IOException {
         return client.newCall(req).execute();
@@ -218,6 +290,12 @@ public class OkHttpUtil {
 
     public static void requestAsync(Request req, Callback callback) {
         client.newCall(req).enqueue(callback);
+    }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    public static RequestBody newEmptyBody() {
+        return RequestBody.create(null, new byte[0]);
     }
 
     public static RequestBody newBytesBody(String data) {
@@ -235,8 +313,6 @@ public class OkHttpUtil {
         MediaType type = MediaType.parse(mediaType);
         return RequestBody.create(type, data);
     }
-
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static RequestBody newFormBody(Map<String, String> map) {
         FormBody.Builder builder = new FormBody.Builder();
@@ -259,6 +335,9 @@ public class OkHttpUtil {
                 builder.addFormDataPart(i, o.toString());
             }
         }
+
+        // default type is multipart/mixed, so use multipart/form-data explicitly
+        builder.setType(MultipartBody.FORM);
         return builder.build();
     }
 
@@ -376,12 +455,21 @@ public class OkHttpUtil {
 
     }
 
-    public static void save(ResponseBody body, String path) throws IOException {
-        File file = new File(path);
+    public static void save(Response res, String file) throws IOException {
+        save(res, new File(file));
+    }
 
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            byte[] buf = body.bytes();
-            fos.write(buf);
+    public static void save(Response res, File file) throws IOException {
+        try (ResponseBody body = res.body()) {
+            if (body == null) throw new IOException("response body is null");
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                byte[] buf = new byte[BUFFER_SIZE];
+                InputStream ins = body.byteStream();
+                int readSize;
+                while ((readSize = ins.read(buf)) > 0) {
+                    fos.write(buf, 0, readSize);
+                }
+            }
         }
     }
 

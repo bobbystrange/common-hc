@@ -13,8 +13,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
@@ -24,7 +27,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.dreamcat.common.util.ObjectUtil;
 import org.dreamcat.common.util.UrlUtil;
 
@@ -35,7 +37,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -50,6 +51,18 @@ public class HttpClientUtil {
     private static final HttpLoggingInterceptor HTTP_LOGGING_INTERCEPTOR = new HttpLoggingInterceptor();
     private static final CloseableHttpClient client = newClient();
 
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
+
+    public static CloseableHttpResponse get(String url) throws IOException {
+        return get(url, null);
+    }
+
+    public static CloseableHttpResponse get(
+            String url,
+            Map<String, String> headers) throws IOException {
+        return get(url, headers, null);
+    }
+
     public static CloseableHttpResponse get(
             String url,
             Map<String, String> headers,
@@ -57,7 +70,106 @@ public class HttpClientUtil {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
         }
-        return request(url, null, headers, queryMap, HttpGet::new);
+        return request(url, "GET", null, headers, queryMap);
+    }
+
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
+
+    public static CloseableHttpResponse postJSON(
+            String url,
+            String jsonData) throws IOException {
+        return postJSON(url, jsonData, null);
+    }
+
+    public static CloseableHttpResponse postJSON(
+            String url,
+            String jsonData,
+            Map<String, String> headers) throws IOException {
+        return postJSON(url, jsonData, headers, null);
+    }
+
+    public static CloseableHttpResponse postJSON(
+            String url,
+            String jsonData,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
+        return post(url, newJSONBody(jsonData), headers, queryMap);
+    }
+
+    public static CloseableHttpResponse postXML(
+            String url,
+            String xmlData) throws IOException {
+        return postXML(url, xmlData, null);
+    }
+
+    public static CloseableHttpResponse postXML(
+            String url,
+            String xmlData,
+            Map<String, String> headers) throws IOException {
+        return postXML(url, xmlData, headers, null);
+    }
+
+    public static CloseableHttpResponse postXML(
+            String url,
+            String xmlData,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
+        return post(url, newXMLBody(xmlData), headers, queryMap);
+    }
+
+    public static CloseableHttpResponse postForm(
+            String url,
+            Map<String, String> formData) throws IOException {
+        return postForm(url, formData, null);
+    }
+
+    public static CloseableHttpResponse postForm(
+            String url,
+            Map<String, String> formData,
+            Map<String, String> headers) throws IOException {
+        return postForm(url, formData, headers, null);
+    }
+
+    public static CloseableHttpResponse postForm(
+            String url,
+            Map<String, String> formData,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
+        return post(url, newFormBody(formData), headers, queryMap);
+    }
+
+    public static CloseableHttpResponse postMultipartForm(
+            String url,
+            Map<String, Object> formData) throws IOException {
+        return postMultipartForm(url, formData, null);
+    }
+
+    public static CloseableHttpResponse postMultipartForm(
+            String url,
+            Map<String, Object> formData,
+            Map<String, String> headers) throws IOException {
+        return postMultipartForm(url, formData, headers, null);
+    }
+
+    public static CloseableHttpResponse postMultipartForm(
+            String url,
+            Map<String, Object> formData,
+            Map<String, String> headers,
+            Map<String, String> queryMap) throws IOException {
+        return post(url, newMultipartBody(formData), headers, queryMap);
+    }
+
+    public static CloseableHttpResponse post(
+            String url,
+            HttpEntity entity) throws IOException {
+        return post(url, entity, null);
+    }
+
+    public static CloseableHttpResponse post(
+            String url,
+            HttpEntity entity,
+            Map<String, String> headers) throws IOException {
+        return post(url, entity, headers, null);
     }
 
     public static CloseableHttpResponse post(
@@ -65,37 +177,26 @@ public class HttpClientUtil {
             HttpEntity entity,
             Map<String, String> headers,
             Map<String, String> queryMap) throws IOException {
-        return request(url, entity, headers, queryMap, HttpPost::new);
+        return request(url, "POST", entity, headers, queryMap);
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    public static CloseableHttpResponse put(
+    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
+
+    /**
+     * @param url     url
+     * @param method  http method
+     * @param entity  only works in Post/Put/Patch
+     * @param headers extra headers
+     * @return response
+     * @throws IOException http I/O error
+     */
+    public static CloseableHttpResponse request(
             String url,
+            String method,
             HttpEntity entity,
-            Map<String, String> headers,
-            Map<String, String> queryMap) throws IOException {
-        return request(url, entity, headers, queryMap, HttpPut::new);
-    }
-
-    public static CloseableHttpResponse delete(
-            String url,
-            Map<String, String> headers,
-            Map<String, String> queryMap) throws IOException {
-        if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = UrlUtil.concatUrl(url, queryMap);
-        }
-        return request(url, null, headers, queryMap, HttpDelete::new);
-    }
-
-    public static CloseableHttpResponse head(
-            String url,
-            Map<String, String> headers,
-            Map<String, String> queryMap) throws IOException {
-        if (ObjectUtil.isNotEmpty(queryMap)) {
-            url = UrlUtil.concatUrl(url, queryMap);
-        }
-        return request(url, null, headers, queryMap, HttpHead::new);
+            Map<String, String> headers) throws IOException {
+        return request(url, method, entity, headers, null);
     }
 
     public static CloseableHttpResponse request(
@@ -104,38 +205,41 @@ public class HttpClientUtil {
             HttpEntity entity,
             Map<String, String> headers,
             Map<String, String> queryMap) throws IOException {
-        Function<String, HttpUriRequest> constructor;
-        method = method.toUpperCase();
-        switch (method) {
-            default:
-                throw new IllegalArgumentException("no supported http method " + method);
-            case "GET":
-                constructor = HttpGet::new;
-                break;
-            case "POST":
-                constructor = HttpPost::new;
-                break;
-            case "PUT":
-                constructor = HttpPut::new;
-                break;
-            case "DELETE":
-                constructor = HttpDelete::new;
-                break;
-        }
-        return request(url, entity, headers, queryMap, constructor);
-    }
-
-    public static CloseableHttpResponse request(
-            String url,
-            HttpEntity entity,
-            Map<String, String> headers,
-            Map<String, String> queryMap,
-            Function<String, HttpUriRequest> constructor) throws IOException {
         if (ObjectUtil.isNotEmpty(queryMap)) {
             url = UrlUtil.concatUrl(url, queryMap);
         }
 
-        HttpUriRequest req = constructor.apply(url);
+        method = method.toUpperCase();
+        HttpUriRequest req;
+        switch (method) {
+            default:
+                throw new IllegalArgumentException("no supported http method " + method);
+            case "GET":
+                req = new HttpGet(url);
+                break;
+            case "POST":
+                req = new HttpPost(url);
+                break;
+            case "PUT":
+                req = new HttpPut(url);
+                break;
+            case "DELETE":
+                req = new HttpDelete(url);
+                break;
+            case "HEAD":
+                req = new HttpHead(url);
+                break;
+            case "OPTIONS":
+                req = new HttpOptions(url);
+                break;
+            case "PATCH":
+                req = new HttpPatch(url);
+                break;
+            case "TRACE":
+                req = new HttpTrace(url);
+                break;
+        }
+
         if (ObjectUtil.isNotEmpty(headers)) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 req.addHeader(entry.getKey(), entry.getValue());
@@ -145,45 +249,39 @@ public class HttpClientUtil {
         if (entity != null && req instanceof HttpEntityEnclosingRequest) {
             ((HttpEntityEnclosingRequest) req).setEntity(entity);
         }
-        return request(req);
+        return client.execute(req);
+
     }
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    public static CloseableHttpResponse request(HttpUriRequest req) throws IOException {
-        return client.execute(req);
-    }
-
-    public static HttpEntity newJSONEntity(String data) {
+    public static HttpEntity newJSONBody(String data) {
         StringEntity entity = new StringEntity(data, StandardCharsets.UTF_8);
         entity.setContentType(APPLICATION_JSON_UTF_8);
         return entity;
     }
 
-    public static HttpEntity newXMLEntity(String data) {
+    public static HttpEntity newXMLBody(String data) {
         StringEntity entity = new StringEntity(data, StandardCharsets.UTF_8);
         entity.setContentType(APPLICATION_XML_UTF_8);
         return entity;
     }
 
-    public static HttpEntity newStringEntity(String data, String contentType) {
+    public static HttpEntity newStringBody(String data, String contentType) {
         StringEntity entity = new StringEntity(data, StandardCharsets.UTF_8);
         entity.setContentType(contentType);
         return entity;
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    public static HttpEntity newFormEntity(Map<String, String> form) throws UnsupportedEncodingException {
+    public static HttpEntity newFormBody(Map<String, String> form) throws UnsupportedEncodingException {
         List<NameValuePair> pairList = form.entrySet().stream()
                 .map(entry -> new BasicNameValuePair(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
 
         return new UrlEncodedFormEntity(pairList);
     }
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    public static HttpEntity newMultipartEntity(Map<String, Object> multipart) {
+    public static HttpEntity newMultipartBody(Map<String, Object> multipart) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
         for (String i : multipart.keySet()) {
@@ -204,6 +302,8 @@ public class HttpClientUtil {
         }
         return builder.build();
     }
+
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     public static CloseableHttpClient newClient() {
         return newClient(null, (String) null, (String) null);
@@ -265,12 +365,7 @@ public class HttpClientUtil {
         return builder.build();
     }
 
-    public static String toString(CloseableHttpResponse response) throws IOException {
-        HttpEntity entity = response.getEntity();
-        if (entity == null) return null;
-        //         ContentType contentType = ContentType.getOrDefault(entity);
-        return EntityUtils.toString(entity);
-    }
+    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     private static HttpRequestInterceptor httpRequestInterceptor() {
         return HTTP_LOGGING_INTERCEPTOR;

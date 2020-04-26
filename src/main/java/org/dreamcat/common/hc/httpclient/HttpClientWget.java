@@ -9,7 +9,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.dreamcat.common.core.Wget;
-import org.dreamcat.common.util.ThreadUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -20,23 +19,24 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Create by tuke on 2018/11/25
  */
 public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpResponse> {
-
-    private CloseableHttpClient client;
-    private ExecutorService executorService;
+    private final CloseableHttpClient client;
 
     public HttpClientWget() {
         this(HttpClients.createDefault());
     }
 
     public HttpClientWget(CloseableHttpClient client) {
-        executorService = ThreadUtil.newExecutorService(getClass().getSimpleName());
         this.client = client;
+    }
+
+    @Override
+    public HttpUriRequest prepare(String url, String method, Map<String, String> headers) {
+        return null;
     }
 
     @Override
@@ -55,10 +55,8 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     }
 
     @Override
-    public void save(CloseableHttpResponse res, String path) throws IOException {
-        throwIfNotSuccessful(res);
-
-        File file = new File(path);
+    public void save(CloseableHttpResponse res, File file) throws IOException {
+        checkStatusCode(res);
         try (FileOutputStream output = new FileOutputStream(file)) {
             HttpEntity entity = res.getEntity();
             entity.writeTo(output);
@@ -67,7 +65,7 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
 
     @Override
     public String string(CloseableHttpResponse res) throws IOException {
-        throwIfNotSuccessful(res);
+        checkStatusCode(res);
 
         HttpEntity entity = res.getEntity();
         return EntityUtils.toString(entity, StandardCharsets.UTF_8);
@@ -75,7 +73,7 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
 
     @Override
     public byte[] bytes(CloseableHttpResponse res) throws IOException {
-        throwIfNotSuccessful(res);
+        checkStatusCode(res);
 
         HttpEntity entity = res.getEntity();
         return EntityUtils.toByteArray(entity);
@@ -83,7 +81,7 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
 
     @Override
     public InputStream inputStream(CloseableHttpResponse res) throws IOException {
-        throwIfNotSuccessful(res);
+        checkStatusCode(res);
 
         HttpEntity entity = res.getEntity();
         return entity.getContent();
@@ -91,7 +89,7 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
 
     @Override
     public Reader reader(CloseableHttpResponse res) throws IOException {
-        throwIfNotSuccessful(res);
+        checkStatusCode(res);
         HttpEntity entity = res.getEntity();
         return new InputStreamReader(entity.getContent(), getCharset(entity));
     }
@@ -113,7 +111,7 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
         return charset;
     }
 
-    private void throwIfNotSuccessful(CloseableHttpResponse res) throws IOException {
+    private void checkStatusCode(CloseableHttpResponse res) throws IOException {
         int code = res.getStatusLine().getStatusCode();
         boolean successful = code >= 200 && code < 300;
         if (!successful) {
@@ -121,22 +119,4 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
         }
     }
 
-    // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
-
-    public void requestAsync(HttpUriRequest req, Callback<HttpUriRequest, CloseableHttpResponse> callback) {
-        executorService.submit(() -> {
-            try {
-                CloseableHttpResponse res = client.execute(req);
-                callback.onComplete(req, res);
-            } catch (IOException e) {
-                callback.onError(req, e);
-            }
-        });
-    }
-
-    interface Callback<Req, Res> {
-        void onComplete(Req req, Res res);
-
-        void onError(Req req, Exception e);
-    }
 }

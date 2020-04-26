@@ -35,4 +35,9 @@ public class InterceptableHttpClientWget extends HttpClientWget implements Inter
     public Interceptor.Dispatcher<HttpUriRequest, CloseableHttpResponse> dispatcher() {
         return target.dispatcher();
     }
+
+    @Override
+    public Interceptor.Listener<HttpUriRequest, CloseableHttpResponse> listener() {
+        return target.listener();
+    }
 }
