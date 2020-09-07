@@ -1,7 +1,7 @@
 package org.dreamcat.common.hc.xstream;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dreamcat.common.bean.BeanUtil;
+import org.dreamcat.common.bean.BeanFormatUtil;
 import org.dreamcat.common.hc.test.BeanBase;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 @Slf4j
 public class XStreamUtilTest {
 
-    private BeanBase obj = BeanBase.newInstance();
+    private final BeanBase obj = BeanBase.newInstance();
 
     @Test
     public void toXml() {
@@ -20,7 +20,7 @@ public class XStreamUtilTest {
 
         BeanBase newObj = XStreamUtil.fromXML(xml, BeanBase.class);
         assert newObj != null;
-        log.info("bean:\n{}", BeanUtil.toPrettyString(newObj));
+        log.info("bean:\n{}", BeanFormatUtil.pretty(newObj));
 
     }
 }

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.dreamcat.common.bean.BeanUtil;
+import org.dreamcat.common.bean.BeanFormatUtil;
 import org.dreamcat.common.util.RandomUtil;
 
 import java.lang.annotation.ElementType;
@@ -56,7 +56,7 @@ public class BeanBase {
         meta2.setName(obj.getClass().getSuperclass().getName());
         meta2.setVersion(new Version(0, 1, 1, Version.Type.ALPHA));
         obj.setExtraMeta(meta2);
-        log.info("\n{}", BeanUtil.toPrettyString(obj));
+        log.info("\n{}", BeanFormatUtil.pretty(obj));
         return obj;
     }
 

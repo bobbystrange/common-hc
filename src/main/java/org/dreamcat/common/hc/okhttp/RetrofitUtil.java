@@ -22,12 +22,12 @@ import java.util.Map;
 @Slf4j
 public class RetrofitUtil {
 
-    private static HashMap<String, Retrofit> instances = new HashMap<>();
+    private static final HashMap<String, Retrofit> instances = new HashMap<>();
 
-    private static Gson gson = new GsonBuilder().create();
-    private static Converter.Factory gsonFactory =
+    private static final Gson gson = new GsonBuilder().create();
+    private static final Converter.Factory gsonFactory =
             GsonConverterFactory.create(gson);
-    private static XStreamXmlConverterFactory xstreamFactory;
+    private static final XStreamXmlConverterFactory xstreamFactory;
 
     static {
         XStream xStream = XStreamUtil.newXStream();
@@ -75,12 +75,20 @@ public class RetrofitUtil {
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
+    public static Retrofit getInstance4Json() {
+        return getInstance4Json(null);
+    }
+
     public static Retrofit getInstance4Json(String baseUrl) {
         return getInstance(baseUrl, gsonFactory);
     }
 
     public static Retrofit getInstance4Json(String baseUrl, Map<String, String> headers) {
         return getInstance(baseUrl, gsonFactory, headers);
+    }
+
+    public static Retrofit getInstance4Xml() {
+        return getInstance4Xml(null);
     }
 
     public static Retrofit getInstance4Xml(String baseUrl) {
@@ -110,9 +118,9 @@ public class RetrofitUtil {
         if (instances.containsKey(baseUrl)) return instances.get(baseUrl);
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .client(OkHttpUtil.newClient(headers, null, null));
+                .client(OkHttpUtil.newClient(headers));
 
+        if (baseUrl != null) builder.baseUrl(baseUrl);
         if (converterFactory != null) builder.addConverterFactory(converterFactory);
         if (callAdapterFactory != null) builder.addCallAdapterFactory(callAdapterFactory);
 

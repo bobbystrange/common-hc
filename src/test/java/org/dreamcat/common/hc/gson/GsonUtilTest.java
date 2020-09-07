@@ -1,7 +1,8 @@
 package org.dreamcat.common.hc.gson;
 
+import com.google.gson.JsonElement;
 import lombok.extern.slf4j.Slf4j;
-import org.dreamcat.common.bean.BeanUtil;
+import org.dreamcat.common.bean.BeanFormatUtil;
 import org.dreamcat.common.hc.test.BeanBase;
 import org.junit.Test;
 
@@ -14,8 +15,8 @@ import java.util.Map;
 @Slf4j
 public class GsonUtilTest {
 
+    private final BeanBase obj = BeanBase.newInstance();
     String json;
-    private BeanBase obj = BeanBase.newInstance();
 
     @Test
     public void toXml() {
@@ -24,7 +25,7 @@ public class GsonUtilTest {
 
         BeanBase newObj = GsonUtil.fromJson(json, BeanBase.class);
         assert newObj != null;
-        log.info("bean:\n{}", BeanUtil.toPrettyString(newObj));
+        log.info("bean:\n{}", BeanFormatUtil.pretty(newObj));
 
     }
 
@@ -33,11 +34,11 @@ public class GsonUtilTest {
         json = "['FleetWood', 'MAC']";
         log.info("json:\n{}", json);
         List<String> list = GsonUtil.toList(json);
-        log.info("list:\n{}\n", BeanUtil.toPrettyString(list));
+        log.info("list:\n{}\n", BeanFormatUtil.pretty(list));
 
         json = "[1, '', true, [], {}]";
         List<Object> list2 = GsonUtil.toList(json);
-        log.info("list2:\n{}", BeanUtil.toPrettyString(list2));
+        log.info("list2:\n{}", BeanFormatUtil.pretty(list2));
     }
 
     @Test
@@ -45,20 +46,27 @@ public class GsonUtilTest {
         json = "{\"john\": \"lennon\", \"bob\": \"dylan\"}";
         log.info("json:\n{}", json);
         Map<String, Object> map = GsonUtil.toMap(json);
-        log.info("map:\n{}\n", BeanUtil.toPrettyString(map));
+        log.info("map:\n{}\n", BeanFormatUtil.pretty(map));
 
         json = "{\"john\": \"lennon\", \"bob\": [\"dylan\"]}";
         log.info("json:\n{}", json);
         Map<String, Object> map2 = GsonUtil.toMap(json);
-        log.info("map2:\n{}\n", BeanUtil.toPrettyString(map2));
+        log.info("map2:\n{}\n", BeanFormatUtil.pretty(map2));
 
         json = GsonUtil.toJson(obj);
         log.info("json:\n{}", json);
         Map<String, Object> map3 = GsonUtil.toMap(json);
-        log.info("map:\n{}\n", BeanUtil.toPrettyString(map3));
+        log.info("map:\n{}\n", BeanFormatUtil.pretty(map3));
 
     }
 
+    @Test
+    public void toJson() {
+        json = "{\"john\": \"lennon\", \"bob\": \"dylan\"}";
+        JsonElement root = GsonUtil.toJsonElement(json);
+        log.info("{}", GsonUtil.toJson(root));
+
+    }
 
 }
 /*
