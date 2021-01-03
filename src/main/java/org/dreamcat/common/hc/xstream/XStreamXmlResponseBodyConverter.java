@@ -4,9 +4,6 @@ import com.thoughtworks.xstream.XStream;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 
-import java.io.IOException;
-
-
 final class XStreamXmlResponseBodyConverter<T> implements Converter<ResponseBody, T> {
 
     private final Class<T> cls;
@@ -18,7 +15,7 @@ final class XStreamXmlResponseBodyConverter<T> implements Converter<ResponseBody
     }
 
     @Override
-    public T convert(ResponseBody value) throws IOException {
+    public T convert(ResponseBody value) {
         try {
             this.xStream.processAnnotations(cls);
             T instance = cls.newInstance();

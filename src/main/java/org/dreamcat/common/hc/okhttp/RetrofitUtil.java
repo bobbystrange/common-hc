@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import org.dreamcat.common.hc.gson.GsonUtil;
 import org.dreamcat.common.hc.xstream.XStreamUtil;
@@ -17,10 +18,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 @Slf4j
-public class RetrofitUtil {
+public final class RetrofitUtil {
+
+    private RetrofitUtil() {
+    }
 
     private static final HashMap<String, Retrofit> instances = new HashMap<>();
 
@@ -75,51 +78,33 @@ public class RetrofitUtil {
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    public static Retrofit getInstance4Json() {
-        return getInstance4Json(null);
+    public static Retrofit getInstance4Json(OkHttpClient client) {
+        return getInstance4Json(null, client);
     }
 
-    public static Retrofit getInstance4Json(String baseUrl) {
-        return getInstance(baseUrl, gsonFactory);
+    public static Retrofit getInstance4Json(String baseUrl, OkHttpClient client) {
+        return getInstance(baseUrl, gsonFactory, client);
     }
 
-    public static Retrofit getInstance4Json(String baseUrl, Map<String, String> headers) {
-        return getInstance(baseUrl, gsonFactory, headers);
+    public static Retrofit getInstance4Xml(OkHttpClient client) {
+        return getInstance4Xml(null, client);
     }
 
-    public static Retrofit getInstance4Xml() {
-        return getInstance4Xml(null);
+    public static Retrofit getInstance4Xml(String baseUrl, OkHttpClient client) {
+        return getInstance(baseUrl, xstreamFactory, client);
     }
 
-    public static Retrofit getInstance4Xml(String baseUrl) {
-        return getInstance(baseUrl, xstreamFactory);
-    }
-
-    public static Retrofit getInstance4Xml(String baseUrl, Map<String, String> headers) {
-        return getInstance(baseUrl, xstreamFactory, headers);
-    }
-
-    // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
-
-    public static Retrofit getInstance(String baseUrl, Converter.Factory factory) {
-        return getInstance(baseUrl, factory, null, null);
-    }
-
-    public static Retrofit getInstance(String baseUrl, Converter.Factory factory, Map<String, String> headers) {
-        return getInstance(baseUrl, factory, null, headers);
-    }
-
-    public static Retrofit getInstance(String baseUrl, Converter.Factory converterFactory, CallAdapter.Factory callAdapterFactory) {
-        return getInstance(baseUrl, converterFactory, callAdapterFactory, null);
+    public static Retrofit getInstance(String baseUrl, Converter.Factory factory, OkHttpClient client) {
+        return getInstance(baseUrl, factory, null, client);
     }
 
     public static Retrofit getInstance(
-            String baseUrl, Converter.Factory converterFactory, CallAdapter.Factory callAdapterFactory, Map<String, String> headers) {
+            String baseUrl, Converter.Factory converterFactory,
+            CallAdapter.Factory callAdapterFactory, OkHttpClient client) {
         if (instances.containsKey(baseUrl)) return instances.get(baseUrl);
 
         Retrofit.Builder builder = new Retrofit.Builder()
-                .client(OkHttpUtil.newClient(headers));
-
+                .client(client);
         if (baseUrl != null) builder.baseUrl(baseUrl);
         if (converterFactory != null) builder.addConverterFactory(converterFactory);
         if (callAdapterFactory != null) builder.addCallAdapterFactory(callAdapterFactory);

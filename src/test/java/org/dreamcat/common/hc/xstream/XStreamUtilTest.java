@@ -1,7 +1,8 @@
 package org.dreamcat.common.hc.xstream;
 
+import static org.dreamcat.common.util.BeanUtil.pretty;
+
 import lombok.extern.slf4j.Slf4j;
-import org.dreamcat.common.bean.BeanFormatUtil;
 import org.dreamcat.common.hc.test.BeanBase;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class XStreamUtilTest {
 
         BeanBase newObj = XStreamUtil.fromXML(xml, BeanBase.class);
         assert newObj != null;
-        log.info("bean:\n{}", BeanFormatUtil.pretty(newObj));
+        log.info("bean:\n{}", pretty(newObj));
 
     }
 }

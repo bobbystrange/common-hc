@@ -1,13 +1,12 @@
 package org.dreamcat.common.hc.xstream;
 
 import com.thoughtworks.xstream.XStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 
 public class XStreamXmlConverterFactory extends Converter.Factory {
 
@@ -38,7 +37,8 @@ public class XStreamXmlConverterFactory extends Converter.Factory {
     }
 
     @Override
-    public Converter<ResponseBody, ?> responseBodyConverter(Type type, Annotation[] annotations, Retrofit retrofit) {
+    public Converter<ResponseBody, ?> responseBodyConverter(
+            Type type, Annotation[] annotations, Retrofit retrofit) {
 
         if (!(type instanceof Class)) {
             return null;
@@ -50,8 +50,9 @@ public class XStreamXmlConverterFactory extends Converter.Factory {
     }
 
     @Override
-    public Converter<?, RequestBody> requestBodyConverter(Type type,
-                                                          Annotation[] parameterAnnotations, Annotation[] methodAnnotations, Retrofit retrofit) {
+    public Converter<?, RequestBody> requestBodyConverter(
+            Type type, Annotation[] parameterAnnotations,
+            Annotation[] methodAnnotations, Retrofit retrofit) {
 
         if (!(type instanceof Class)) {
             return null;

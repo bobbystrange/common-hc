@@ -20,7 +20,8 @@ public class GlobalRequestInterceptor implements Interceptor {
         Request request = chain.request();
 
         Request.Builder builder = request.newBuilder();
-        for (String name : headers.keySet()) {
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            String name = entry.getKey();
             builder.addHeader(name, headers.get(name));
         }
 

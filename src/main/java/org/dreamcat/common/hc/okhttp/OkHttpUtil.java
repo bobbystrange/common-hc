@@ -22,7 +22,11 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class OkHttpUtil {
+public final class OkHttpUtil {
+
+    private OkHttpUtil() {
+    }
+
     public static final RequestBody EMPTY_BODY = newEmptyBody();
 
     private static final String APPLICATION_XML_UTF_8 = "application/xml; charset=UTF-8";
@@ -30,6 +34,7 @@ public class OkHttpUtil {
     private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
     private static final String TEXT_PLAIN_UTF_8 = "text/plain; charset=UTF-8";
     private static final int TIMEOUT = 10;
+    private static final String AUTHORIZATION = "Authorization";
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
@@ -65,7 +70,8 @@ public class OkHttpUtil {
 
     public static RequestBody newFormBody(Map<String, String> map) {
         FormBody.Builder builder = new FormBody.Builder();
-        for (String name : map.keySet()) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            String name = entry.getKey();
             builder.add(name, map.get(name));
         }
         return builder.build();
@@ -73,7 +79,8 @@ public class OkHttpUtil {
 
     public static RequestBody newMultipartBody(Map<String, Object> map) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
-        for (String i : map.keySet()) {
+        for (Map.Entry<String, Object> entry: map.entrySet()) {
+            String i = entry.getKey();
             Object o = map.get(i);
             if (o instanceof File) {
                 File file = (File) o;
@@ -97,8 +104,8 @@ public class OkHttpUtil {
                 null, null, interceptors);
     }
 
-    public static OkHttpClient newClient(Map<String, String> headers) {
-        return newClient(TIMEOUT, headers, null, null);
+    public static OkHttpClient newClient(Map<String, String> headers, Interceptor... interceptors) {
+        return newClient(TIMEOUT, headers, null, null, interceptors);
     }
 
     public static OkHttpClient newClient(
@@ -111,14 +118,14 @@ public class OkHttpUtil {
             builder.authenticator((route, response) -> {
                 log.info("Authenticating for response: " + response);
 
-                if (response.request().header("Authorization") != null) {
+                if (response.request().header(AUTHORIZATION) != null) {
                     // Give up, we've already failed to authenticate.
                     return null;
                 }
 
                 String credential = Credentials.basic(basicUsername, basicPassword);
                 return response.request().newBuilder()
-                        .header("Authorization", credential)
+                        .header(AUTHORIZATION, credential)
                         .build();
             });
         }
@@ -165,11 +172,20 @@ public class OkHttpUtil {
     // ---- ---- ---- ----    ---- ---- ---- ----    ---- ---- ---- ----
 
     public static HttpLoggingInterceptor newHttpLoggingInterceptor() {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(
-                message -> {
-                    log.info("**** **** ****:\t{}", message);
-                });
-        interceptor.setLevel(HttpLoggingInterceptor.Level.HEADERS);
+        return newHttpLoggingInterceptor(HttpLoggingInterceptor.Level.HEADERS, log::info);
+    }
+
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Level level) {
+        return newHttpLoggingInterceptor(level, log::info);
+    }
+
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Logger logger) {
+        return newHttpLoggingInterceptor(HttpLoggingInterceptor.Level.HEADERS, logger);
+    }
+
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Level level, HttpLoggingInterceptor.Logger logger) {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(logger);
+        interceptor.setLevel(level);
         return interceptor;
     }
 
@@ -182,7 +198,9 @@ public class OkHttpUtil {
             if (!cookies.isEmpty()) {
                 Cookie cookie = cookies.get(0);
                 String cookieString = String.format("%s=%s", cookie.name(), cookie.value());
-                log.info("add cookie header {}", cookieString);
+                if (log.isDebugEnabled()) {
+                    log.debug("add cookie header {}", cookieString);
+                }
                 builder.addHeader("Cookie", cookieString);
             }
             return chain.proceed(builder.build());
@@ -195,7 +213,7 @@ public class OkHttpUtil {
             Request.Builder builder = request.newBuilder();
 
             String credential = Credentials.basic(basicUsername, basicPassword);
-            builder.addHeader("Authorization", credential);
+            builder.addHeader(AUTHORIZATION, credential);
             return chain.proceed(builder.build());
         };
 
@@ -228,7 +246,6 @@ public class OkHttpUtil {
         if (contentType == null) return MediaType.parse(defaultContentType);
         MediaType type = MediaType.parse(contentType);
         if (type == null) return MediaType.parse(defaultContentType);
-        ;
         return type;
     }
 }

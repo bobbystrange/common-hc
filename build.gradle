@@ -10,6 +10,8 @@ ext {
 }
 
 dependencies {
+    implementation "org.dreamcat:common-core:$VERSION"
+
     // okhttp
     implementation "com.squareup.okhttp3:okhttp:${okhttpVersion}"
     implementation "com.squareup.okhttp3:logging-interceptor:${okhttpVersion}"
@@ -22,9 +24,6 @@ dependencies {
 
     //implementation "com.google.code.gso:gson:${gsonVersion}"
     implementation "com.thoughtworks.xstream:xstream:${xstreamVersion}"
-
-    // { changing = true } is redundant if endswith -SNAPSHOT
-    implementation('org.dreamcat:common-core:0.0.1') { changing = true }
 
     testImplementation "org.slf4j:slf4j-simple:$slf4jVersion"
     testImplementation "junit:junit:$junitVersion"

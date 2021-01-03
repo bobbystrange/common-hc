@@ -139,16 +139,14 @@ public class OkHttpWget implements Wget<Request, Response> {
         method = method.toUpperCase();
         Request.Builder builder = new Request.Builder()
                 .url(url);
-        String mediaType = null;
         if (ObjectUtil.isNotEmpty(headers)) {
             headers.forEach(builder::addHeader);
         }
 
-        switch (method) {
-            case "GET":
-                return builder.get().build();
-            case "HEAD":
-                return builder.head().build();
+        if ("GET".equals(method)) {
+            return builder.get().build();
+        } else if ("HEAD".equals(method)) {
+            return builder.head().build();
         }
 
         switch (method) {
@@ -160,8 +158,9 @@ public class OkHttpWget implements Wget<Request, Response> {
                 return builder.delete(body).build();
             case "PATCH":
                 return builder.patch(body).build();
+            default:
+                throw new IllegalArgumentException("No such HTTP method: " + method);
         }
-        throw new IllegalArgumentException("No such HTTP method: " + method);
     }
 
 }

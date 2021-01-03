@@ -19,18 +19,16 @@ public class HttpLoggingInterceptor implements HttpRequestInterceptor, HttpRespo
     @Override
     public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
         log.info("\t> {}", request.getRequestLine());
-        Arrays.stream(request.getAllHeaders()).forEach(header -> {
-            log.info("\t>{}: {}", header.getName(), header.getValue());
-        });
+        Arrays.stream(request.getAllHeaders()).forEach(header ->
+                log.info("\t>{}: {}", header.getName(), header.getValue()));
         log.info("\t>");
     }
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
         log.info("\t<{}", response.getStatusLine());
-        Arrays.stream(response.getAllHeaders()).forEach(header -> {
-            log.info("\t<{}: {}", header.getName(), header.getValue());
-        });
+        Arrays.stream(response.getAllHeaders()).forEach(header ->
+                log.info("\t<{}: {}", header.getName(), header.getValue()));
         log.info("\t<");
     }
 }

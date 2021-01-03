@@ -7,7 +7,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -20,7 +19,10 @@ import java.util.Map;
 /**
  * Create by tuke on 2018/10/14
  */
-public class GsonUtil {
+public final class GsonUtil {
+
+    private GsonUtil() {
+    }
 
     private static final Gson gson = newGson();
 
@@ -42,8 +44,11 @@ public class GsonUtil {
     }
 
     public static Map<String, Object> toMap(String jsonObject) {
-        JsonElement root = toJsonElement(jsonObject);
-        return toMap(root.getAsJsonObject());
+        return toMap(toJsonElement(jsonObject).getAsJsonObject());
+    }
+
+    public static Map<String, Object> toMap(Object bean) {
+        return toMap(gson.toJsonTree(bean).getAsJsonObject());
     }
 
     public static <T> T fromJson(String json, Class<T> clazz) {
@@ -176,9 +181,8 @@ public class GsonUtil {
 
     private static Map<String, Object> toMap(JsonObject object) {
         Map<String, Object> map = new HashMap<>();
-        object.entrySet().forEach(entry -> {
-            map.put(entry.getKey(), toObject(entry.getValue()));
-        });
+        object.entrySet().forEach(entry ->
+                map.put(entry.getKey(), toObject(entry.getValue())));
         return map;
     }
 

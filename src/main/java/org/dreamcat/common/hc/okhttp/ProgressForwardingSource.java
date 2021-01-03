@@ -27,8 +27,6 @@ public class ProgressForwardingSource extends ForwardingSource {
         return this;
     }
 
-    ;
-
     public ProgressForwardingSource listener(ProgressListener listener) {
         this.listener = listener;
         return this;

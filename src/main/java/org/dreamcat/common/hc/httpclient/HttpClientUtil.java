@@ -31,7 +31,10 @@ import java.util.stream.Collectors;
 /**
  * Create by tuke on 2018/11/25
  */
-public class HttpClientUtil {
+public final class HttpClientUtil {
+
+    private HttpClientUtil() {
+    }
 
     private static final String APPLICATION_XML_UTF_8 = "application/xml; charset=UTF-8";
     private static final String APPLICATION_JSON_UTF_8 = "application/json; charset=UTF-8";
@@ -62,15 +65,11 @@ public class HttpClientUtil {
     }
 
     public static HttpEntity newJSONBody(String data) {
-        StringEntity entity = new StringEntity(data, StandardCharsets.UTF_8);
-        entity.setContentType(APPLICATION_JSON_UTF_8);
-        return entity;
+        return newStringBody(data, APPLICATION_JSON_UTF_8);
     }
 
     public static HttpEntity newXMLBody(String data) {
-        StringEntity entity = new StringEntity(data, StandardCharsets.UTF_8);
-        entity.setContentType(APPLICATION_XML_UTF_8);
-        return entity;
+        return newStringBody(data, APPLICATION_XML_UTF_8);
     }
 
     public static HttpEntity newFormBody(Map<String, String> form) throws UnsupportedEncodingException {
@@ -84,7 +83,8 @@ public class HttpClientUtil {
     public static HttpEntity newMultipartBody(Map<String, Object> multipart) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-        for (String i : multipart.keySet()) {
+        for (Map.Entry<String, Object> entry: multipart.entrySet()) {
+            String i = entry.getKey();
             Object o = multipart.get(i);
             if (o instanceof InputStream) {
                 InputStream input = (InputStream) o;
@@ -156,7 +156,7 @@ public class HttpClientUtil {
         }
 
         // BASIC AUTH
-        if (basicUsername != null & basicPassword != null) {
+        if (basicUsername != null && basicPassword != null) {
             UsernamePasswordCredentials credentials =
                     new UsernamePasswordCredentials(basicUsername, basicPassword);
             CredentialsProvider provider = new BasicCredentialsProvider();
