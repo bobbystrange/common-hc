@@ -3,6 +3,8 @@ package org.dreamcat.common.hc.okhttp;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.xstream.XStream;
+import java.io.IOException;
+import java.util.HashMap;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
@@ -15,9 +17,6 @@ import retrofit2.Converter;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 @Slf4j
 public final class RetrofitUtil {
@@ -68,7 +67,8 @@ public final class RetrofitUtil {
                 return responseBody;
             } else {
                 log.info("<-- fail:\tcode={}, message={}", response.code(), response.message());
-                String errorString = response.errorBody() == null ? "null" : response.errorBody().string();
+                String errorString =
+                        response.errorBody() == null ? "null" : response.errorBody().string();
                 throw new RuntimeException(errorString);
             }
         } catch (IOException e) {
@@ -94,7 +94,8 @@ public final class RetrofitUtil {
         return getInstance(baseUrl, xstreamFactory, client);
     }
 
-    public static Retrofit getInstance(String baseUrl, Converter.Factory factory, OkHttpClient client) {
+    public static Retrofit getInstance(String baseUrl, Converter.Factory factory,
+            OkHttpClient client) {
         return getInstance(baseUrl, factory, null, client);
     }
 

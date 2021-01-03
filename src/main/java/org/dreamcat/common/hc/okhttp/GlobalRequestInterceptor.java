@@ -1,11 +1,10 @@
 package org.dreamcat.common.hc.okhttp;
 
+import java.io.IOException;
+import java.util.Map;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
-
-import java.io.IOException;
-import java.util.Map;
 
 public class GlobalRequestInterceptor implements Interceptor {
 

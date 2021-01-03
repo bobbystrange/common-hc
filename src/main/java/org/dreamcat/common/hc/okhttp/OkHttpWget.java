@@ -1,5 +1,10 @@
 package org.dreamcat.common.hc.okhttp;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Call;
 import okhttp3.OkHttpClient;
@@ -11,14 +16,9 @@ import org.dreamcat.common.core.Wget;
 import org.dreamcat.common.util.ObjectUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.util.Map;
-
 @Slf4j
 public class OkHttpWget implements Wget<Request, Response> {
+
     private final OkHttpClient client;
 
     public OkHttpWget() {
@@ -40,13 +40,15 @@ public class OkHttpWget implements Wget<Request, Response> {
     }
 
     @Override
-    public Request prepare(String url, String method, Map<String, String> headers, String body, String contentType) {
+    public Request prepare(String url, String method, Map<String, String> headers, String body,
+            String contentType) {
         RequestBody requestBody = OkHttpUtil.newStringBody(body, contentType);
         return prepare(url, method, headers, requestBody);
     }
 
     @Override
-    public Request prepare(String url, String method, Map<String, String> headers, byte[] body, String contentType) {
+    public Request prepare(String url, String method, Map<String, String> headers, byte[] body,
+            String contentType) {
         RequestBody requestBody = OkHttpUtil.newBytesBody(body, contentType);
         return prepare(url, method, headers, requestBody);
     }
@@ -93,7 +95,8 @@ public class OkHttpWget implements Wget<Request, Response> {
 
         for (String element : elements) {
             element = element.trim();
-            if (element.length() > "filename=\"\"".length() && element.startsWith("filename=\"") && element.endsWith("\"")) {
+            if (element.length() > "filename=\"\"".length() && element.startsWith("filename=\"")
+                    && element.endsWith("\"")) {
                 String filename = element.substring("filename=\"".length(), element.length() - 1);
                 return save(response, new File(dir, filename));
             }
@@ -126,16 +129,19 @@ public class OkHttpWget implements Wget<Request, Response> {
     }
 
     @Override
-    public Response postForm(String url, Map<String, String> headers, Map<String, String> form) throws IOException {
+    public Response postForm(String url, Map<String, String> headers, Map<String, String> form)
+            throws IOException {
         return request(prepare(url, "POST", headers, OkHttpUtil.newFormBody(form)));
     }
 
     @Override
-    public Response postFormData(String url, Map<String, String> headers, Map<String, Object> formData) throws IOException {
+    public Response postFormData(String url, Map<String, String> headers,
+            Map<String, Object> formData) throws IOException {
         return request(prepare(url, "POST", headers, OkHttpUtil.newMultipartBody(formData)));
     }
 
-    private Request prepare(String url, String method, Map<String, String> headers, RequestBody body) {
+    private Request prepare(String url, String method, Map<String, String> headers,
+            RequestBody body) {
         method = method.toUpperCase();
         Request.Builder builder = new Request.Builder()
                 .url(url);

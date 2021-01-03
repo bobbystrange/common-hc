@@ -1,5 +1,10 @@
 package org.dreamcat.common.hc.okhttp;
 
+import java.io.File;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -14,12 +19,6 @@ import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.dreamcat.common.net.SocketUtil;
 import org.dreamcat.common.util.ObjectUtil;
-
-import java.io.File;
-import java.net.URLConnection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public final class OkHttpUtil {
@@ -79,7 +78,7 @@ public final class OkHttpUtil {
 
     public static RequestBody newMultipartBody(Map<String, Object> map) {
         MultipartBody.Builder builder = new MultipartBody.Builder();
-        for (Map.Entry<String, Object> entry: map.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             String i = entry.getKey();
             Object o = map.get(i);
             if (o instanceof File) {
@@ -175,15 +174,18 @@ public final class OkHttpUtil {
         return newHttpLoggingInterceptor(HttpLoggingInterceptor.Level.HEADERS, log::info);
     }
 
-    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Level level) {
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(
+            HttpLoggingInterceptor.Level level) {
         return newHttpLoggingInterceptor(level, log::info);
     }
 
-    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Logger logger) {
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(
+            HttpLoggingInterceptor.Logger logger) {
         return newHttpLoggingInterceptor(HttpLoggingInterceptor.Level.HEADERS, logger);
     }
 
-    public static HttpLoggingInterceptor newHttpLoggingInterceptor(HttpLoggingInterceptor.Level level, HttpLoggingInterceptor.Logger logger) {
+    public static HttpLoggingInterceptor newHttpLoggingInterceptor(
+            HttpLoggingInterceptor.Level level, HttpLoggingInterceptor.Logger logger) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor(logger);
         interceptor.setLevel(level);
         return interceptor;
@@ -221,7 +223,8 @@ public final class OkHttpUtil {
 
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
-    private static OkHttpClient.Builder newBuilder(int timeout, Map<String, String> headers, Interceptor... interceptors) {
+    private static OkHttpClient.Builder newBuilder(int timeout, Map<String, String> headers,
+            Interceptor... interceptors) {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .readTimeout(timeout, TimeUnit.SECONDS)
                 .writeTimeout(timeout, TimeUnit.SECONDS)

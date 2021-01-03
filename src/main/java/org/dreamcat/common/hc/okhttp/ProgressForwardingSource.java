@@ -1,15 +1,15 @@
 package org.dreamcat.common.hc.okhttp;
 
+import java.io.IOException;
 import okio.Buffer;
 import okio.ForwardingSource;
 import okio.Source;
-
-import java.io.IOException;
 
 /**
  * Create by tuke on 2018/10/16
  */
 public class ProgressForwardingSource extends ForwardingSource {
+
     private long contentLength;
     private ProgressListener listener;
     private long byteCount;

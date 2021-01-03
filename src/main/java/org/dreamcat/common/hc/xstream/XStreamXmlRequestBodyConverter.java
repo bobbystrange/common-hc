@@ -1,14 +1,13 @@
 package org.dreamcat.common.hc.xstream;
 
 import com.thoughtworks.xstream.XStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.Buffer;
 import retrofit2.Converter;
-
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 final class XStreamXmlRequestBodyConverter<T> implements Converter<T, RequestBody> {
 

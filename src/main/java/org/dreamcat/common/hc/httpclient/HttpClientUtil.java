@@ -1,5 +1,13 @@
 package org.dreamcat.common.hc.httpclient;
 
+import java.io.File;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponseInterceptor;
@@ -18,15 +26,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.dreamcat.common.util.ObjectUtil;
-
-import java.io.File;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Create by tuke on 2018/11/25
@@ -72,7 +71,8 @@ public final class HttpClientUtil {
         return newStringBody(data, APPLICATION_XML_UTF_8);
     }
 
-    public static HttpEntity newFormBody(Map<String, String> form) throws UnsupportedEncodingException {
+    public static HttpEntity newFormBody(Map<String, String> form)
+            throws UnsupportedEncodingException {
         List<NameValuePair> pairList = form.entrySet().stream()
                 .map(entry -> new BasicNameValuePair(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
@@ -83,7 +83,7 @@ public final class HttpClientUtil {
     public static HttpEntity newMultipartBody(Map<String, Object> multipart) {
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 
-        for (Map.Entry<String, Object> entry: multipart.entrySet()) {
+        for (Map.Entry<String, Object> entry : multipart.entrySet()) {
             String i = entry.getKey();
             Object o = multipart.get(i);
             if (o instanceof InputStream) {
@@ -160,7 +160,8 @@ public final class HttpClientUtil {
             UsernamePasswordCredentials credentials =
                     new UsernamePasswordCredentials(basicUsername, basicPassword);
             CredentialsProvider provider = new BasicCredentialsProvider();
-            AuthScope scope = new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT, AuthScope.ANY_REALM);
+            AuthScope scope = new AuthScope(AuthScope.ANY_HOST, AuthScope.ANY_PORT,
+                    AuthScope.ANY_REALM);
             provider.setCredentials(scope, credentials);
             builder.setDefaultCredentialsProvider(provider);
         }

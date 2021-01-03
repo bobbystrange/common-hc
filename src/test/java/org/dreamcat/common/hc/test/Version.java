@@ -7,6 +7,7 @@ import lombok.Getter;
  */
 @Getter
 public class Version {
+
     // 0.1.0bugfixed1
     private final int majorVersion;
     private final int minorVersion;

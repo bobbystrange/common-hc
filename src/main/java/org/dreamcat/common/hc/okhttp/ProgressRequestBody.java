@@ -1,5 +1,11 @@
 package org.dreamcat.common.hc.okhttp;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import okhttp3.MediaType;
@@ -8,13 +14,6 @@ import okio.Buffer;
 import okio.BufferedSink;
 import okio.Okio;
 import okio.Source;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Create by tuke on 2018/10/16
@@ -59,6 +58,7 @@ public class ProgressRequestBody extends RequestBody {
     }
 
     public static class Builder {
+
         private ProgressRequestBody target;
 
         public Builder() {

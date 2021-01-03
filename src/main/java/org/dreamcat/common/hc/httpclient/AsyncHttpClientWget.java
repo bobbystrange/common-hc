@@ -1,5 +1,6 @@
 package org.dreamcat.common.hc.httpclient;
 
+import java.util.List;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -10,12 +11,11 @@ import org.dreamcat.common.core.chain.RealCall;
 import org.dreamcat.common.core.chain.RealInterceptTarget;
 import org.dreamcat.common.function.ThrowableFunction;
 
-import java.util.List;
-
 /**
  * Create by tuke on 2018/11/25
  */
-public class AsyncHttpClientWget extends HttpClientWget implements InterceptTarget<HttpUriRequest, CloseableHttpResponse> {
+public class AsyncHttpClientWget extends HttpClientWget implements
+        InterceptTarget<HttpUriRequest, CloseableHttpResponse> {
 
     private final RealInterceptTarget<HttpUriRequest, CloseableHttpResponse> target;
 
@@ -46,17 +46,21 @@ public class AsyncHttpClientWget extends HttpClientWget implements InterceptTarg
     }
 
     @Override
-    public void requestAsync(HttpUriRequest request, Callback<HttpUriRequest, CloseableHttpResponse> callback) {
-        target.newCall(request).enqueue(new Interceptor.Callback<HttpUriRequest, CloseableHttpResponse>() {
-            @Override
-            public void onComptele(RealCall<HttpUriRequest, CloseableHttpResponse> call, CloseableHttpResponse response) {
-                callback.onComplete(call.original(), response);
-            }
+    public void requestAsync(HttpUriRequest request,
+            Callback<HttpUriRequest, CloseableHttpResponse> callback) {
+        target.newCall(request)
+                .enqueue(new Interceptor.Callback<HttpUriRequest, CloseableHttpResponse>() {
+                    @Override
+                    public void onComptele(RealCall<HttpUriRequest, CloseableHttpResponse> call,
+                            CloseableHttpResponse response) {
+                        callback.onComplete(call.original(), response);
+                    }
 
-            @Override
-            public void onError(RealCall<HttpUriRequest, CloseableHttpResponse> call, Exception e) {
-                callback.onError(call.original(), e);
-            }
-        });
+                    @Override
+                    public void onError(RealCall<HttpUriRequest, CloseableHttpResponse> call,
+                            Exception e) {
+                        callback.onError(call.original(), e);
+                    }
+                });
     }
 }

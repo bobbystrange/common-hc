@@ -1,9 +1,5 @@
 package org.dreamcat.common.hc.test;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import org.dreamcat.common.util.RandomUtil;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,12 +10,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.dreamcat.common.util.RandomUtil;
 
 /**
  * Create by tuke on 2019-02-12
  */
 @Data
 public class BeanUnion {
+
     private static final Date date1 = of(1999, 9, 1);
     private static final Date date2 = of(1999, 9, 2);
     private static final Date date3 = of(1999, 9, 14);
@@ -79,12 +79,15 @@ public class BeanUnion {
     }
 
     @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.LOCAL_VARIABLE})
+    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER,
+            ElementType.LOCAL_VARIABLE})
     public @interface Anno {
+
     }
 
     @Data
     public static class Sub1 extends Key {
+
         private String name;
         private long amount;
 
@@ -97,6 +100,7 @@ public class BeanUnion {
 
     @Data
     public static class Sub2 extends Key {
+
         private String name;
         private long amount;
 
@@ -109,6 +113,7 @@ public class BeanUnion {
 
     @Data
     public static class Sub3 extends Key {
+
         private String name;
         private long amount;
 
@@ -122,6 +127,7 @@ public class BeanUnion {
     @AllArgsConstructor
     @Data
     public static class Key {
+
         @Anno
         private Date yearMonth;
         @Anno

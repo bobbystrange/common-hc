@@ -1,5 +1,15 @@
 package org.dreamcat.common.hc.httpclient;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
@@ -24,22 +34,12 @@ import org.apache.http.util.EntityUtils;
 import org.dreamcat.common.core.Wget;
 import org.dreamcat.common.util.ObjectUtil;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-
 /**
  * Create by tuke on 2018/11/25
  */
 @Slf4j
 public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpResponse> {
+
     private final CloseableHttpClient client;
 
     public HttpClientWget() {
@@ -54,7 +54,8 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
         this.client = client;
     }
 
-    public HttpUriRequest prepare(String url, String method, Map<String, String> headers, HttpEntity entity) {
+    public HttpUriRequest prepare(String url, String method, Map<String, String> headers,
+            HttpEntity entity) {
         method = method.toUpperCase();
         HttpUriRequest request;
         switch (method) {
@@ -102,12 +103,14 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     }
 
     @Override
-    public HttpUriRequest prepare(String url, String method, Map<String, String> headers, String body, String contentType) {
+    public HttpUriRequest prepare(String url, String method, Map<String, String> headers,
+            String body, String contentType) {
         return prepare(url, method, headers, HttpClientUtil.newStringBody(body, contentType));
     }
 
     @Override
-    public HttpUriRequest prepare(String url, String method, Map<String, String> headers, byte[] body, String contentType) {
+    public HttpUriRequest prepare(String url, String method, Map<String, String> headers,
+            byte[] body, String contentType) {
         return prepare(url, method, headers, HttpClientUtil.newBytesBody(body, contentType));
     }
 
@@ -175,7 +178,8 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     // ==== ==== ==== ====    ==== ==== ==== ====    ==== ==== ==== ====
 
     @Override
-    public void requestAsync(HttpUriRequest request, Callback<HttpUriRequest, CloseableHttpResponse> callback) {
+    public void requestAsync(HttpUriRequest request,
+            Callback<HttpUriRequest, CloseableHttpResponse> callback) {
         throw new UnsupportedOperationException();
     }
 
@@ -195,12 +199,14 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
     }
 
     @Override
-    public CloseableHttpResponse postForm(String url, Map<String, String> headers, Map<String, String> form) throws IOException {
+    public CloseableHttpResponse postForm(String url, Map<String, String> headers,
+            Map<String, String> form) throws IOException {
         return request(prepare(url, "POST", headers, HttpClientUtil.newFormBody(form)));
     }
 
     @Override
-    public CloseableHttpResponse postFormData(String url, Map<String, String> headers, Map<String, Object> formData) throws IOException {
+    public CloseableHttpResponse postFormData(String url, Map<String, String> headers,
+            Map<String, Object> formData) throws IOException {
         return null;
     }
 
@@ -211,7 +217,8 @@ public class HttpClientWget implements Wget<HttpUriRequest, CloseableHttpRespons
         if (contentType != null) {
             charset = contentType.getCharset();
             if (charset == null) {
-                final ContentType defaultContentType = ContentType.getByMimeType(contentType.getMimeType());
+                final ContentType defaultContentType = ContentType
+                        .getByMimeType(contentType.getMimeType());
                 charset = defaultContentType != null ? defaultContentType.getCharset() : null;
             }
         }

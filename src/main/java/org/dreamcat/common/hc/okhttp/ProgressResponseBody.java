@@ -48,6 +48,7 @@ public class ProgressResponseBody extends ResponseBody {
     }
 
     public static class Builder {
+
         private ProgressResponseBody target;
 
         public Builder() {
