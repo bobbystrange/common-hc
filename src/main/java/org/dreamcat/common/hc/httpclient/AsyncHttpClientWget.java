@@ -5,10 +5,10 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.dreamcat.common.core.chain.InterceptTarget;
-import org.dreamcat.common.core.chain.Interceptor;
-import org.dreamcat.common.core.chain.RealCall;
-import org.dreamcat.common.core.chain.RealInterceptTarget;
+import org.dreamcat.common.core.pattern.chain.InterceptTarget;
+import org.dreamcat.common.core.pattern.chain.Interceptor;
+import org.dreamcat.common.core.pattern.chain.RealCall;
+import org.dreamcat.common.core.pattern.chain.RealInterceptTarget;
 import org.dreamcat.common.function.ThrowableFunction;
 
 /**

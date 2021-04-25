@@ -5,6 +5,9 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
@@ -18,6 +21,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import org.dreamcat.common.net.SocketUtil;
+import org.dreamcat.common.net.SslAlgorithm;
+import org.dreamcat.common.net.SslUtil;
 import org.dreamcat.common.util.ObjectUtil;
 
 @Slf4j
@@ -158,13 +163,20 @@ public final class OkHttpUtil {
             String certPath, String certPassword, String keyStoreType,
             Interceptor... interceptors) throws Exception {
         OkHttpClient.Builder builder = newBuilder(timeout, headers, interceptors);
-        if (keyStoreType == null)
-            builder.sslSocketFactory(
-                    SocketUtil.sslSocketFactoryForBKS(certPath, certPassword),
-                    SocketUtil.x509TrustManager());
-        else builder.sslSocketFactory(
-                SocketUtil.sslSocketFactory(certPath, certPassword, keyStoreType),
-                SocketUtil.x509TrustManager());
+
+        SSLSocketFactory sslSocketFactory;
+        // Create an ssl socket factory with our all-trusting manager
+        X509TrustManager trustManager =  SslUtil.unsafeX509TrustManager();
+        if (certPath == null || certPassword == null) {
+            sslSocketFactory = SslAlgorithm.SSL.sslSocketFactoryForNoKey(
+                    new TrustManager[]{ trustManager });
+        } else if (keyStoreType == null) {
+            sslSocketFactory = SslAlgorithm.SSL.sslSocketFactoryForBKS(certPath, certPassword);
+        } else {
+            sslSocketFactory = SslAlgorithm.SSL.sslSocketFactory(certPath, certPassword, keyStoreType);
+        }
+        builder.sslSocketFactory(sslSocketFactory, trustManager);
+
         return builder.build();
     }
 
