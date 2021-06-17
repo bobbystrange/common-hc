@@ -20,7 +20,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.logging.HttpLoggingInterceptor;
-import org.dreamcat.common.net.SocketUtil;
 import org.dreamcat.common.net.SslAlgorithm;
 import org.dreamcat.common.net.SslUtil;
 import org.dreamcat.common.util.ObjectUtil;
@@ -166,10 +165,10 @@ public final class OkHttpUtil {
 
         SSLSocketFactory sslSocketFactory;
         // Create an ssl socket factory with our all-trusting manager
-        X509TrustManager trustManager =  SslUtil.unsafeX509TrustManager();
+        X509TrustManager trustManager = SslUtil.unsafeX509TrustManager();
         if (certPath == null || certPassword == null) {
             sslSocketFactory = SslAlgorithm.SSL.sslSocketFactoryForNoKey(
-                    new TrustManager[]{ trustManager });
+                    new TrustManager[]{trustManager});
         } else if (keyStoreType == null) {
             sslSocketFactory = SslAlgorithm.SSL.sslSocketFactoryForBKS(certPath, certPassword);
         } else {
